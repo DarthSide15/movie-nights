@@ -58,7 +58,7 @@ public class CalendarQuickstart {
     }
 
 
-    public static void main(String... args) throws IOException, GeneralSecurityException {
+    public List<Event> getEvents() throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Calendar service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, authorize(HTTP_TRANSPORT))
@@ -76,15 +76,9 @@ public class CalendarQuickstart {
         List<Event> items = events.getItems();
         if (items.isEmpty()) {
             System.out.println("No upcoming events found.");
+            return items;
         } else {
-            System.out.println("Upcoming events");
-            for (Event event : items) {
-                DateTime start = event.getStart().getDateTime();
-                if (start == null) {
-                    start = event.getStart().getDate();
-                }
-                System.out.printf("%s (%s)\n", event.getSummary(), start);
-            }
+            return items;
         }
     }
 }
