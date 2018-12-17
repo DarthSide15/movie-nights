@@ -41,7 +41,7 @@ public class GoogleController {
         //  @throws IOException If the credentials.json file cannot be found.
 
         // Load client secrets.
-        InputStream in = GoogleConnection.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        InputStream in = GoogleController.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
         // Build flow and trigger user authorization request.
