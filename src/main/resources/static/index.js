@@ -25,7 +25,7 @@ function signInCallback(authResult) {
         // Send the code to the server
         $.ajax({
             type: 'POST',
-            url: 'https://localhost:8080/storeauthcode',
+            url: 'http://localhost:8080/storeauthcode',
             // Always include an `X-Requested-With` header in every AJAX request,
             // to protect against CSRF attacks.
             headers: {

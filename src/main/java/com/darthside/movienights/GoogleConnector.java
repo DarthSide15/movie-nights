@@ -23,7 +23,10 @@ import java.util.List;
 
 class GoogleConnector {
 
-    private static final String APPLICATION_NAME = "Google Calendar API Connection";
+
+
+
+    /*private static final String APPLICATION_NAME = "Google Calendar API Connection";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_READONLY);
@@ -73,5 +76,5 @@ class GoogleConnector {
         } else {
             return items;
         }
-    }
+    }*/
 }
