@@ -42,11 +42,12 @@ public class GoogleController {
             e.printStackTrace();
         }
 
-        // Store these 3in your DB
+        // Store these 3in your database
         String accessToken = tokenResponse.getAccessToken();
         String refreshToken = tokenResponse.getRefreshToken();
         long expiresAt = System.currentTimeMillis() + (tokenResponse.getExpiresInSeconds() * 1000);
 
+        // Save to db
         // Debug purpose only
         System.out.println("accessToken: " + accessToken);
         System.out.println("refreshToken: " + refreshToken);
