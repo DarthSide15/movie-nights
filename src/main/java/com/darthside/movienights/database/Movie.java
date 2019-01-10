@@ -20,7 +20,6 @@ public class Movie {
         private int year;
         @JsonAlias("Poster")
         private String poster;
-
         private String imdbRating;
 
         public Movie() {}
@@ -73,11 +72,11 @@ public class Movie {
         this.poster = poster;
     }
 
-    public String getImdbRating() {
+    public String getimdbRating() {
         return imdbRating;
     }
 
-    public void setImdbRating(String imdbRating) {
+    public void setimdbRating(String imdbRating) {
         this.imdbRating = imdbRating;
     }
 }

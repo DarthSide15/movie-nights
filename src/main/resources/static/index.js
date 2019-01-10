@@ -1,6 +1,5 @@
 const CLIENT_ID = "294307018578-mlelfvhktca0k84t1brnho8ssn25dsqe.apps.googleusercontent.com";
 
-
 function start() {
     gapi.load('auth2', function() {
         auth2 = gapi.auth2.init({
@@ -41,4 +40,27 @@ function signInCallback(authResult) {
     } else {
         // There was an error.
     }
+}
+
+$('#search-input').keyup(function (e) {
+    if (e.keyCode === 13) {
+        getMovie();
+    }
+});
+$('#submit-button').click(getMovie);
+
+function getMovie () {
+    fetch('/movie?title=' + $("#search-input").val())
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(myJson) {
+            console.log(JSON.stringify(myJson));
+            $(".movie-id").text('ID: ' + myJson.id);
+            $(".movie-title").text('Title: ' + myJson.title);
+            $(".movie-genre").text('Genre: ' + myJson.genre);
+            $(".movie-rating").text('IMDB Rating: ' + myJson.imdbRating);
+            $(".movie-poster").attr('src', myJson.poster);
+        });
+
 }

@@ -25,7 +25,6 @@ public class OMDBController {
             Movie movie = restTemplate.getForObject("https://www.omdbapi.com/?t=" + title + apiKey, Movie.class);
             if (movie.getTitle() != null)
                 movieTable.save(movie);
-            System.out.println("Table contains: " + movieTable.toString());
             System.out.println("Movie saved to DB");
             return movie;
         }
