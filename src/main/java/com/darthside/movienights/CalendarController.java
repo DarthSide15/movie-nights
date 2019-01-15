@@ -93,9 +93,19 @@ public class CalendarController {
 
         // Calculate periods from end time of previous event to start time of next event
         for (int i = 0; i < allEvents.size() - 1 ; i++) {
+
+            // TODO: Handle overlapping events
+            // If end time of current event occurs AFTER start time of next event,
+            // Do not store this period
+            // if (eventA.getEnd() > eventA.getStart())
+            //      continue;
+
+            // The issue here is that we don't know how to compare the values
+
             Period periodBetweenEvents = new Period(firstNonNull(allEvents.get(i).getEnd().getDateTime(), allEvents.get(i).getEnd().getDate()),
                     firstNonNull(allEvents.get(i + 1).getStart().getDateTime(), allEvents.get(i + 1).getStart().getDate()));
             periods.add(periodBetweenEvents);
+
         }
         System.out.println(periods);
 
