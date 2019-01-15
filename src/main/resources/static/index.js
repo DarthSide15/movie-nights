@@ -50,6 +50,8 @@ $('#search-input').keyup(function (e) {
 });
 
 $('#submit-button').click(getMovie);
+$('#periods-button').click(getCalendar);
+
 
 function getMovie () {
     fetch('/movie?title=' + $("#search-input").val())
@@ -72,8 +74,19 @@ function getCalendar () {
             return response.json();
         })
         .then(function(myJson) {
-            console.log(JSON.stringify(myJson));
-            $("#calendar").text(myJson);
+
+
+            let startTime;
+            let endTime;
+            for (let i = 0; i < myJson.length; i++) {
+                startTime = new Date(myJson[i]['start']['value']);
+                endTime = new Date(myJson[i]['end']['value']);
+                let p = $('<p class="timeItem"></p>');
+                p.text('Start: ' + startTime.toLocaleString() + '   End: ' + endTime.toLocaleString());
+                $("#periods").append(p);
+            }
+
+
         });
 }
 
