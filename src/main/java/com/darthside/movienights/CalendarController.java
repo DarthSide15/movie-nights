@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -31,6 +34,12 @@ public class CalendarController {
             if (param != null)
                 return param;
         return null;
+    }
+
+    public String convertTime(long time){
+        Date date = new Date(time);
+        Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+        return format.format(date);
     }
 
     @RequestMapping(value = "/periods", method = RequestMethod.GET)
@@ -83,7 +92,7 @@ public class CalendarController {
         periods.add(nowToNext);
 
         // Calculate periods from end time of previous event to start time of next event
-        for (int i = 1; i < allEvents.size() - 1; i++) {
+        for (int i = 0; i < allEvents.size() - 1 ; i++) {
             Period periodBetweenEvents = new Period(firstNonNull(allEvents.get(i).getEnd().getDateTime(), allEvents.get(i).getEnd().getDate()),
                     firstNonNull(allEvents.get(i + 1).getStart().getDateTime(), allEvents.get(i + 1).getStart().getDate()));
             periods.add(periodBetweenEvents);
@@ -97,6 +106,14 @@ public class CalendarController {
                         + 31*24*60*60*1000L)
         );
         periods.add(lastEventPlusAMonth);
+
+        System.out.println("Size: " + periods.size());
+        System.out.println("Available periods: \n" );
+        for ( Period period : periods) {
+            System.out.println("Start: " + convertTime(period.getStart().getValue()));
+            System.out.println("End: " + convertTime(period.getEnd().getValue()));
+            System.out.println();
+        }
 
         return periods;
     }
