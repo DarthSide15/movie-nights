@@ -42,11 +42,13 @@ function signInCallback(authResult) {
     }
 }
 
+// Submit on 'Return'-key
 $('#search-input').keyup(function (e) {
     if (e.keyCode === 13) {
         getMovie();
     }
 });
+
 $('#submit-button').click(getMovie);
 
 function getMovie () {
@@ -62,5 +64,16 @@ function getMovie () {
             $(".movie-rating").text('IMDB Rating: ' + myJson.imdbRating);
             $(".movie-poster").attr('src', myJson.poster);
         });
-
 }
+
+function getCalendar () {
+    fetch('/periods')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(myJson) {
+            console.log(JSON.stringify(myJson));
+            $("#calendar").text(myJson);
+        });
+}
+

@@ -17,7 +17,6 @@ public class OMDBController {
     MovieTable movieTable;
     private RestTemplate restTemplate = new RestTemplate();
 
-
     @RequestMapping(value = "/movie", method = RequestMethod.GET)
     public Movie getMovie(@RequestParam(value = "title", defaultValue= " ") String title) {
         // TODO: If movie is already in DB, do not make request.

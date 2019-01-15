@@ -64,8 +64,6 @@ public class GoogleController {
         Token token = new Token(accessToken, refreshToken, expiresAt);
         tokenTable.save(token);
 
-
-
         return "OK";
     }
 

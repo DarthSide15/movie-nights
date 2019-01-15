@@ -32,7 +32,7 @@ public class CalendarController {
                 return param;
         return null;
     }
-    
+
     @RequestMapping(value = "/periods", method = RequestMethod.GET)
     public List<Period> getPossiblePeriods() {
 
