@@ -47,13 +47,23 @@ public class CalendarController {
 
         List<Token> tokens = tokenTable.findAll();
         List<Event> allEvents = new ArrayList<>();
+        GoogleCredential cred;
+        long currentTime = System.currentTimeMillis();
 
         // Gets events from all available users and stores them in 'allEvents'
         for (Token t: tokens) {
-            // Use an accessToken previously gotten to call Google's API
-            GoogleCredential credential = new GoogleCredential().setAccessToken(t.getAccessToken());
+
+            if( t.getExpiresAt() < currentTime ) {
+                cred = GoogleController.getRefreshedCredentials(t.getRefreshToken());
+                t.setAccessToken(cred.getAccessToken());
+                t.setExpiresAt(System.currentTimeMillis() + 3600*1000);
+                tokenTable.save(t);
+            } else {
+                cred = new GoogleCredential().setAccessToken(t.getAccessToken());
+            }
+            
             Calendar calendar =
-                    new Calendar.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
+                    new Calendar.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), cred)
                             .setApplicationName("Movie Nights")
                             .build();
 

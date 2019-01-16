@@ -1,10 +1,7 @@
 package com.darthside.movienights;
 import com.darthside.movienights.database.Token;
 import com.darthside.movienights.database.TokenTable;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
@@ -26,6 +23,21 @@ public class GoogleController {
 
     @Autowired
     TokenTable tokenTable;
+
+    public static GoogleCredential getRefreshedCredentials(String refreshCode) {
+        try {
+            GoogleTokenResponse response = new GoogleRefreshTokenRequest(
+                    new NetHttpTransport(), JacksonFactory.getDefaultInstance(), refreshCode, CLIENT_ID, CLIENT_SECRET )
+                    .execute();
+
+            return new GoogleCredential().setAccessToken(response.getAccessToken());
+        }
+        catch( Exception ex ){
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
 
     @RequestMapping(value = "/storeauthcode", method = RequestMethod.POST)
     public String storeauthcode(@RequestBody String code, @RequestHeader("X-Requested-With") String encoding) {
@@ -54,12 +66,6 @@ public class GoogleController {
         String accessToken = tokenResponse.getAccessToken();
         String refreshToken = tokenResponse.getRefreshToken();
         long expiresAt = System.currentTimeMillis() + (tokenResponse.getExpiresInSeconds() * 1000);
-
-        // Save to db
-        // Debug purpose only
-        System.out.println("accessToken: " + accessToken);
-        System.out.println("refreshToken: " + refreshToken);
-        System.out.println("expiresAt: " + expiresAt);
 
         Token token = new Token(accessToken, refreshToken, expiresAt);
         tokenTable.save(token);
