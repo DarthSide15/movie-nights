@@ -47,11 +47,12 @@ public class CalendarController {
 
         List<Token> tokens = tokenTable.findAll();
         List<Event> allEvents = new ArrayList<>();
-        GoogleCredential cred;
+
         long currentTime = System.currentTimeMillis();
 
         // Gets events from all available users and stores them in 'allEvents'
         for (Token t: tokens) {
+            GoogleCredential cred;
 
             if( t.getExpiresAt() < currentTime ) {
                 cred = GoogleController.getRefreshedCredentials(t.getRefreshToken());
@@ -61,7 +62,7 @@ public class CalendarController {
             } else {
                 cred = new GoogleCredential().setAccessToken(t.getAccessToken());
             }
-            
+
             Calendar calendar =
                     new Calendar.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), cred)
                             .setApplicationName("Movie Nights")
