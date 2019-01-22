@@ -11,13 +11,13 @@ public class Period {
         this.start = start;
         this.end = end;
     }
-    DateTime getStart() {
+    public DateTime getStart() {
         return start;
     }
     public void setStart(DateTime start) {
         this.start = start;
     }
-    DateTime getEnd() {
+    public DateTime getEnd() {
         return end;
     }
     public void setEnd(DateTime end) {

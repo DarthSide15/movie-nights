@@ -48,9 +48,8 @@ $('#search-input').keyup(function (e) {
         getMovie();
     }
 });
-
 $('#submit-button').click(getMovie);
-$('#periods-button').click(getCalendar);
+$('#periods-button').click(getFreePeriods);
 
 
 function getMovie () {
@@ -68,14 +67,14 @@ function getMovie () {
         });
 }
 
-function getCalendar () {
+function getFreePeriods () {
+    console.log('Inside getFreePeriods()');
     fetch('/periods')
         .then(function(response) {
             return response.json();
         })
         .then(function(myJson) {
-
-
+            console.log('inside function(myJson)');
             let startTime;
             let endTime;
             for (let i = 0; i < myJson.length; i++) {
@@ -85,8 +84,6 @@ function getCalendar () {
                 p.text('Start: ' + startTime.toLocaleString() + '   End: ' + endTime.toLocaleString());
                 $("#periods").append(p);
             }
-
-
         });
 }
 
