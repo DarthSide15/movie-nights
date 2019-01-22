@@ -14,12 +14,12 @@ public class Token {
     private String refreshToken;
     private long expiresAt;
 
-    public Token(String email, String accessToken, String refreshToken, long expiresAt) {
+/*    public Token(String email, String accessToken, String refreshToken, long expiresAt) {
         this.email = email;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresAt = expiresAt;
-    }
+    }*/
 
     public String getAccessToken() {
         return accessToken;

@@ -67,14 +67,6 @@ public class GoogleController {
         String refreshToken = tokenResponse.getRefreshToken();
         long expiresAt = System.currentTimeMillis() + (tokenResponse.getExpiresInSeconds() * 1000);
 
-
-        // Debug purpose only
-        System.out.println("accessToken: " + accessToken);
-        System.out.println("refreshToken: " + refreshToken);
-        System.out.println("expiresAt: " + expiresAt);
-
-
-
         // Get profile info from ID token (Obtained at the last step of OAuth2)
         GoogleIdToken idToken = null;
         try {
@@ -86,28 +78,40 @@ public class GoogleController {
 
         // Use THIS ID as a key to identify a google user-account.
         String userId = payload.getSubject();
-
         String email = payload.getEmail();
-        boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-        String name = (String) payload.get("name");
-        String pictureUrl = (String) payload.get("picture");
-        String locale = (String) payload.get("locale");
-        String familyName = (String) payload.get("family_name");
-        String givenName = (String) payload.get("given_name");
+//        boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+//        String name = (String) payload.get("name");
+//        String pictureUrl = (String) payload.get("picture");
+//        String locale = (String) payload.get("locale");
+//        String familyName = (String) payload.get("family_name");
+//        String givenName = (String) payload.get("given_name");
 
         // Debugging purposes, should probably be stored in the database instead (At least "givenName").
+//        System.out.println("userId: " + userId);
+//        System.out.println("email: " + email);
+//        System.out.println("emailVerified: " + emailVerified);
+//        System.out.println("name: " + name);
+//        System.out.println("pictureUrl: " + pictureUrl);
+//        System.out.println("locale: " + locale);
+//        System.out.println("familyName: " + familyName);
+//        System.out.println("givenName: " + givenName);
+
+        // Debug purpose only
         System.out.println("userId: " + userId);
         System.out.println("email: " + email);
-        System.out.println("emailVerified: " + emailVerified);
-        System.out.println("name: " + name);
-        System.out.println("pictureUrl: " + pictureUrl);
-        System.out.println("locale: " + locale);
-        System.out.println("familyName: " + familyName);
-        System.out.println("givenName: " + givenName);
+        System.out.println("accessToken: " + accessToken);
+        System.out.println("refreshToken: " + refreshToken);
+        System.out.println("expiresAt: " + expiresAt);
 
-
-        Token token = new Token(email, accessToken, refreshToken, expiresAt);
+/*        Token token = new Token(email, accessToken, refreshToken, expiresAt);
+        tokenTable.save(token);*/
+        Token token = new Token();
+        token.setEmail(email);
+        token.setAccessToken(accessToken);
+        token.setRefreshToken(refreshToken);
+        token.setExpiresAt(expiresAt);
         tokenTable.save(token);
+
 
         return "OK";
     }
