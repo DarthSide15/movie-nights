@@ -1,5 +1,4 @@
 package com.darthside.movienights;
-
 import com.darthside.movienights.database.Token;
 import com.darthside.movienights.database.TokenTable;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.io.IOException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -29,31 +27,31 @@ public class CalendarController {
     TokenTable tokenTable;
 
     // Needed to handle both standard and whole-day events
-    public static <T> T firstNonNull(T... params) {
+    private static <T> T firstNonNull(T... params) {
         for (T param : params)
             if (param != null)
                 return param;
         return null;
     }
 
-    public String convertTime(long time){
+    private String convertTimeToString(long time){
         Date date = new Date(time);
         Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
         return format.format(date);
     }
 
     @RequestMapping(value = "/periods", method = RequestMethod.GET)
-    public List<Period> getPossiblePeriods() {
+    public List<Period> getFreePeriods() {
 
         List<Token> tokens = tokenTable.findAll();
         List<Event> allEvents = new ArrayList<>();
-
         long currentTime = System.currentTimeMillis();
 
         // Gets events from all available users and stores them in 'allEvents'
         for (Token t: tokens) {
             GoogleCredential cred;
 
+            // Refresh access tokens if expired
             if( t.getExpiresAt() < currentTime ) {
                 cred = GoogleController.getRefreshedCredentials(t.getRefreshToken());
                 t.setAccessToken(cred.getAccessToken());
@@ -131,8 +129,8 @@ public class CalendarController {
         System.out.println("Size: " + periods.size());
         System.out.println("Available periods: \n" );
         for ( Period period : periods) {
-            System.out.println("Start: " + convertTime(period.getStart().getValue()));
-            System.out.println("End: " + convertTime(period.getEnd().getValue()));
+            System.out.println("Start: " + convertTimeToString(period.getStart().getValue()));
+            System.out.println("End: " + convertTimeToString(period.getEnd().getValue()));
             System.out.println();
         }
 

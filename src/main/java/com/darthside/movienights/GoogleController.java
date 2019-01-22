@@ -38,7 +38,6 @@ public class GoogleController {
         }
     }
 
-
     @RequestMapping(value = "/storeauthcode", method = RequestMethod.POST)
     public String storeauthcode(@RequestBody String code, @RequestHeader("X-Requested-With") String encoding) {
 
@@ -115,6 +114,5 @@ public class GoogleController {
 
         return "OK";
     }
-
 
 }

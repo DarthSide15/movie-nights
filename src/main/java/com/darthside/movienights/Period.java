@@ -7,23 +7,19 @@ public class Period {
     private DateTime start;
     private DateTime end;
 
-    public Period(DateTime start, DateTime end) {
+    Period(DateTime start, DateTime end) {
         this.start = start;
         this.end = end;
     }
-
-    public DateTime getStart() {
+    DateTime getStart() {
         return start;
     }
-
     public void setStart(DateTime start) {
         this.start = start;
     }
-
-    public DateTime getEnd() {
+    DateTime getEnd() {
         return end;
     }
-
     public void setEnd(DateTime end) {
         this.end = end;
     }

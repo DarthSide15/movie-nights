@@ -12,9 +12,9 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class OMDBController {
 
-    private final String apiKey = "&apikey=6c247c78";
     @Autowired
     MovieTable movieTable;
+    private final String apiKey = "&apikey=6c247c78";
     private RestTemplate restTemplate = new RestTemplate();
 
     @RequestMapping(value = "/movie", method = RequestMethod.GET)
