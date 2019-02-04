@@ -1,17 +1,20 @@
 package com.darthside.movienights;
+import com.darthside.movienights.database.Booking;
+import com.darthside.movienights.database.BookingTable;
 import com.darthside.movienights.database.Token;
 import com.darthside.movienights.database.TokenTable;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -20,11 +23,15 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import static com.darthside.movienights.GoogleController.getRefreshedCredentials;
+
 @RestController
 public class CalendarController {
 
     @Autowired
     TokenTable tokenTable;
+    @Autowired
+    BookingTable bookingTable;
 
     // Needed to handle both standard and whole-day events
     private static <T> T firstNonNull(T... params) {
@@ -40,6 +47,15 @@ public class CalendarController {
         return format.format(date);
     }
 
+    public Calendar getCalendar(GoogleCredential credential) {
+        return new Calendar.Builder(
+                new NetHttpTransport(),
+                JacksonFactory.getDefaultInstance(),
+                credential)
+                .setApplicationName("Movie Nights")
+                .build();
+    }
+
     @RequestMapping(value = "/periods", method = RequestMethod.GET)
     public List<Period> getFreePeriods() {
 
@@ -53,7 +69,7 @@ public class CalendarController {
 
             // Refresh access tokens if expired
             if( t.getExpiresAt() < currentTime ) {
-                cred = GoogleController.getRefreshedCredentials(t.getRefreshToken());
+                cred = getRefreshedCredentials(t.getRefreshToken());
                 t.setAccessToken(cred.getAccessToken());
                 t.setExpiresAt(System.currentTimeMillis() + 3600*1000);
                 tokenTable.save(t);
@@ -61,10 +77,7 @@ public class CalendarController {
                 cred = new GoogleCredential().setAccessToken(t.getAccessToken());
             }
 
-            Calendar calendar =
-                    new Calendar.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), cred)
-                            .setApplicationName("Movie Nights")
-                            .build();
+            Calendar calendar = getCalendar(cred);
 
             // Gets the next 10 events from the primary calendar
             DateTime now = new DateTime(System.currentTimeMillis());
@@ -135,5 +148,44 @@ public class CalendarController {
         }
 
         return periods;
+    }
+
+
+    @CrossOrigin(origins = "*")
+    @JsonProperty("booking")
+    @PostMapping(value = "/booking")
+    public void showBookingInfo(@RequestBody Booking booking) throws IOException {
+
+        for( Token token : tokenTable.findAll()) {
+            GoogleCredential credential = getRefreshedCredentials(token.getRefreshToken());
+            Calendar calendar = getCalendar(credential);
+
+            Event event = new Event()
+                    .setSummary("Movie Night!")
+                    .setLocation("")
+                    .setDescription("");
+
+            DateTime startDateTime = new DateTime( Long.parseLong(booking.getStart()) );
+            EventDateTime start = new EventDateTime()
+                    .setDateTime(startDateTime)
+                    .setTimeZone("CET");
+            event.setStart(start);
+
+            DateTime endDateTime = new DateTime( Long.parseLong(booking.getEnd()) );
+            EventDateTime end = new EventDateTime()
+                    .setDateTime(endDateTime)
+                    .setTimeZone("CET");
+            event.setEnd(end);
+
+            String calendarId = "primary";
+
+            event = calendar.events().insert(calendarId, event).execute();
+            System.out.printf("Event created: %s\n", event.getHtmlLink());
+        }
+
+        System.out.println("Success!");
+        System.out.println( Long.parseLong(booking.getStart()) );
+        bookingTable.save(booking);
+
     }
 }

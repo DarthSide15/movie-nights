@@ -14,6 +14,58 @@ $('#signInButton').click(function() {
     auth2.grantOfflineAccess().then(signInCallback);
 });
 
+$('#search-input').keyup(function (e) {
+    if (e.keyCode === 13) {
+        getMovie();
+    }
+});
+
+$('#submit-button').click(getMovie);
+
+$('#periods-button').click(getFreePeriods);
+
+$("#bookMovie").on("click", function(e){
+    e.preventDefault();
+    fetch("/periods")
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(myJson) {
+
+            for(var i = 0; i < myJson.length; i++) {
+
+                var timeStart = myJson[i].start.value;
+                var timeEnd = myJson[i].end.value;
+
+                var dateStart = new Date(timeStart);
+                var dateEnd = new Date(timeEnd);
+
+                console.log(JSON.stringify("Start: " + dateStart + ", End: " + dateEnd));
+
+                var p = $('<p class="timeItem"></p>');
+                var button = $('<button class="bookItem">Book</button>');
+                // button.data({booking: {start:timeStart, end:timeEnd}});
+                button.data({start:timeStart, end:timeEnd});
+                p.text("Start: " + dateStart.toLocaleString() + " -  End: " + dateEnd.toLocaleString());
+                // p.text("Start: " + myJson[i].start.value + " -  End: " + myJson[i].end.value);
+                $("#periods").append(p, button);
+            }
+        });
+});
+
+$("body").on("click",".bookItem", function() {
+    console.log( $(this).data() );
+    var data = $(this).data();
+
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: '/booking',
+        data: JSON.stringify(data),
+        dataType: "json"
+    });
+});
+
 function signInCallback(authResult) {
     console.log('authResult', authResult);
     if (authResult['code']) {
@@ -42,21 +94,12 @@ function signInCallback(authResult) {
     }
 }
 
-// Submit on 'Return'-key
-$('#search-input').keyup(function (e) {
-    if (e.keyCode === 13) {
-        getMovie();
-    }
-});
-$('#submit-button').click(getMovie);
-$('#periods-button').click(getFreePeriods);
-
-
 function getMovie () {
     fetch('/movie?title=' + $("#search-input").val())
         .then(function(response) {
             return response.json();
         })
+
         .then(function(myJson) {
             console.log(JSON.stringify(myJson));
             $(".movie-id").text('ID: ' + myJson.id);
@@ -68,22 +111,23 @@ function getMovie () {
 }
 
 function getFreePeriods () {
-    console.log('Inside getFreePeriods()');
+
     fetch('/periods')
         .then(function(response) {
             return response.json();
         })
         .then(function(myJson) {
-            console.log('inside function(myJson)');
-            let startTime;
-            let endTime;
-            for (let i = 0; i < myJson.length; i++) {
+            var startTime;
+            var endTime;
+            for (var i = 0; i < myJson.length; i++) {
                 startTime = new Date(myJson[i]['start']['value']);
                 endTime = new Date(myJson[i]['end']['value']);
-                let p = $('<p class="timeItem"></p>');
+                var p = $('<p class="timeItem"></p>');
                 p.text('Start: ' + startTime.toLocaleString() + '   End: ' + endTime.toLocaleString());
                 $("#periods").append(p);
             }
         });
 }
+
+
 
