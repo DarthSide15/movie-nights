@@ -161,7 +161,7 @@ public class CalendarController {
             Calendar calendar = getCalendar(credential);
 
             Event event = new Event()
-                    .setSummary("Movie Night!")
+                    .setSummary("Movie Night")
                     .setLocation("")
                     .setDescription("");
 

@@ -42,11 +42,31 @@ $('#signInButton').click(function() {
     auth2.grantOfflineAccess().then(signInCallback);
 });
 
-//$('#periods-button').click(getFreePeriods);
+$('#search-input').keyup(function (e) {
+    if (e.keyCode === 13) {
+        getMovie();
+    }
+});
 
+function getMovie () {
+    fetch('/movie?title=' + $("#search-input").val())
+        .then(function(response) {
+            return response.json();
+        })
 
+        .then(function(myJson) {
+            console.log(JSON.stringify(myJson));
+            $(".movie-id").text('ID: ' + myJson.id);
+            $(".movie-title").text('Title: ' + myJson.title);
+            $(".movie-genre").text('Genre: ' + myJson.genre);
+            $(".movie-rating").text('IMDB Rating: ' + myJson.imdbRating);
+            $(".movie-poster").attr('src', myJson.poster);
+        });
+}
 
-/*$("#bookMovie").on("click", function(e){
+$('#submit-button').click(getMovie);
+
+$("#book-button").on("click", function(e){
     e.preventDefault();
     fetch("/periods")
         .then(function(response) {
@@ -71,9 +91,9 @@ $('#signInButton').click(function() {
                 $("#periods").append(p, button);
             }
         });
-});*/
+});
 
-/*$("body").on("click",".bookItem", function() {
+$("body").on("click",".bookItem", function() {
     console.log( $(this).data() );
     var data = $(this).data();
 
@@ -84,70 +104,10 @@ $('#signInButton').click(function() {
         data: JSON.stringify(data),
         dataType: "json"
     });
-});*/
-
-
-
-// Submit on 'Return'-key
-$('#search-input').keyup(function (e) {
-    if (e.keyCode === 13) {
-        getMovie();
-    }
 });
 
-$('#submit-button').click(getMovie);
 
-$('#periods-button').click(getFreePeriods);
 
-function getMovie () {
-    fetch('/movie?title=' + $("#search-input").val())
-        .then(function(response) {
-            return response.json();
-        })
-
-        .then(function(myJson) {
-            console.log(JSON.stringify(myJson));
-            $(".movie-id").text('ID: ' + myJson.id);
-            $(".movie-title").text('Title: ' + myJson.title);
-            $(".movie-genre").text('Genre: ' + myJson.genre);
-            $(".movie-rating").text('IMDB Rating: ' + myJson.imdbRating);
-            $(".movie-poster").attr('src', myJson.poster);
-        });
-}
-
-function getFreePeriods () {
-
-    fetch('/periods')
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(myJson) {
-            console.log('inside function(myJson)');
-            let startTime;
-            let endTime;
-            $("#periods").append($('<p>Select a time to book a movie night</p>'));
-            for (let i = 0; i < myJson.length; i++) {
-                startTime = new Date(myJson[i]['start']['value']);
-                endTime = new Date(myJson[i]['end']['value']);
-                let p = $('<button class="timeItem"></button>');
-                p.text('Start: ' + startTime.toLocaleString() + '   End: ' + endTime.toLocaleString());
-                $("#periods").append(p);
-            }
-        });
-}
-
-$("body").on('click', '.timeItem', function () {
-    console.log("Creating new event");
-    var data = $(this).data();
-
-    $.ajax({
-        type: "POST",
-        contentType: "application/json",
-        url: '/booking',
-        data: JSON.stringify(data),
-        dataType: "json"
-    });
-});
 
 
 
