@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -132,13 +136,33 @@ public class CalendarController {
         System.out.println(periods);
 
         // Calculate period from end time of last event in the list plus 31 days
-        Period lastEventPlusAMonth = new Period(
+        Period lastEventPlusADay = new Period(
                 firstNonNull(allEvents.get(allEvents.size() -1).getEnd().getDateTime(), allEvents.get(allEvents.size() - 1).getEnd().getDate()),
                 new DateTime(  firstNonNull(allEvents.get(allEvents.size() -1).getEnd().getDateTime(), allEvents.get(allEvents.size() - 1).getEnd().getDate()).getValue()
-                        + 31*24*60*60*1000L)
+                        + 24*60*60*1000L)
         );
-        periods.add(lastEventPlusAMonth);
+        periods.add(lastEventPlusADay);
 
+        ArrayList<Period> suggestedPeriods = new ArrayList<>();
+        for (Period period : periods) {
+            int days = (int)((period.getEnd().getValue() - period.getStart().getValue()) / (86400*1000));
+            for (int i = 0; i < days; i++) {
+                LocalDateTime dateTime = LocalDateTime.now();
+                int date = new Date(period.getStart().getValue()).getDate() + i;
+                dateTime = dateTime.withHour(18).withMinute(0).withDayOfMonth(date);
+                LocalDateTime dateTimeEnd = dateTime.withHour(dateTime.getHour()+5);
+
+                Period newPeriod = new Period(
+                        new DateTime(dateTime.atZone(ZoneId.systemDefault()).toEpochSecond()*1000L),
+                        new DateTime(dateTimeEnd.atZone(ZoneId.systemDefault()).toEpochSecond()*1000L)
+                );
+                suggestedPeriods.add(newPeriod);
+            }
+            System.out.println("days: " + days + ", event count: " + suggestedPeriods.size());
+            //if (new Date(period.getEnd().getValue()).after())
+        }
+
+        periods = suggestedPeriods;
         System.out.println("Size: " + periods.size());
         System.out.println("Available periods: \n" );
         for ( Period period : periods) {
