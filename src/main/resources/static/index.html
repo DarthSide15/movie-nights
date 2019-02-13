@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Nights</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+    <script src="index.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <h1>Movie Nights</h1>
+    <button id="signInButton">Link my Google Calendar</button>
+
+    <br>
+    <br>
+    <br>
+
+    <section id="movie-section">
+        <h2>Search Movie</h2>
+        <input type="search" id="search-input">
+        <button type="button" id="submit-button">Sök</button>
+
+        <div>
+            <p class="movie-id"></p>
+            <p class="movie-title"></p>
+            <p class="movie-genre"></p>
+            <p class="movie-rating"></p>
+            <img class="movie-poster"></img>
+        </div>
+
+        <button id="book-button">Book this movie</button>
+    </section>
+
+
+    <div id="periods">
+
+
+    <br>
+
+    <section id="newEvent">
+        <h1>Select time</h1>
+    </section>
+
+
+</body>
+</html>
